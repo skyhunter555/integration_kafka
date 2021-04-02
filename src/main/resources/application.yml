@@ -1,0 +1,20 @@
+#default config value
+brokers: "localhost:9092"
+messageCount: 1000
+topicName: "demo"
+groupIdConfig: "consumerGroup1"
+maxNoMessageFoundCount: 100
+consumer:
+  offsetResetLatest: "latest"
+  offsetResetEarlier: "earliest"
+  maxPoolRecords: 50
+  clientId: "client1"
+  clientRack: "rackId"
+  partitionAssignmentStrategy: "org.apache.kafka.clients.consumer.CooperativeStickyAssignor"
+producer:
+  acks: "all"
+  retries: 3
+  requestTimeoutMs: 230
+  lingerMs: 20
+  deliveryTimeoutMs: 1000
+

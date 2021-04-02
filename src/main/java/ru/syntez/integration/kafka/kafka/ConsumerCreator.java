@@ -10,18 +10,22 @@ import java.util.Properties;
 
 public class ConsumerCreator {
 
-    public static Consumer<Long, String> createConsumer() {
+    public static Consumer<Long, String> createConsumer(KafkaConfig kafkaConfig) {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, IKafkaConstants.KAFKA_BROKERS);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, IKafkaConstants.GROUP_ID_CONFIG);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBrokers());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfig.getGroupIdConfig());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, RoutingDocumentDeserializer.class.getName());
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, IKafkaConstants.MAX_POLL_RECORDS);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, IKafkaConstants.OFFSET_RESET_EARLIER);
+
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaConfig.getConsumer().getOffsetResetEarlier());
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, kafkaConfig.getConsumer().getMaxPoolRecords());
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, kafkaConfig.getConsumer().getClientId());
+        props.put(ConsumerConfig.CLIENT_RACK_CONFIG, kafkaConfig.getConsumer().getClientRack());
+        props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, kafkaConfig.getConsumer().getPartitionAssignmentStrategy());
 
         Consumer<Long, String> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singletonList(IKafkaConstants.TOPIC_NAME));
+        consumer.subscribe(Collections.singletonList(kafkaConfig.getTopicName()));
         return consumer;
     }
 

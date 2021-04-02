@@ -10,12 +10,19 @@ import ru.syntez.integration.kafka.utils.RoutingDocumentSerializer;
 
 public class ProducerCreator {
 
-    public static Producer<Long, RoutingDocument> createProducer() {
+    public static Producer<Long, RoutingDocument> createProducer(KafkaConfig kafkaConfig) {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, IKafkaConstants.KAFKA_BROKERS);
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, IKafkaConstants.CLIENT_ID);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBrokers());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, RoutingDocumentSerializer.class.getName());
+
+        //props.put(ProducerConfig.CLIENT_ID_CONFIG, kafkaConfig.getProducer().getClientId());
+        props.put(ProducerConfig.ACKS_CONFIG, kafkaConfig.getProducer().getAcks());
+        props.put(ProducerConfig.RETRIES_CONFIG, kafkaConfig.getProducer().getRetries());
+        props.put(ProducerConfig.LINGER_MS_CONFIG, kafkaConfig.getProducer().getLingerMs());
+        props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, kafkaConfig.getProducer().getRequestTimeoutMs());
+        props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaConfig.getProducer().getDeliveryTimeoutMs());
+
         //props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class.getName());
         return new KafkaProducer<>(props);
     }
