@@ -10,10 +10,10 @@ import java.util.Properties;
 
 public class ConsumerCreator {
 
-    public static Consumer<Long, String> createConsumer(KafkaConfig kafkaConfig) {
+    public static Consumer<Long, String> createConsumer(KafkaConfig kafkaConfig, String consumerGroup) {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBrokers());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfig.getGroupIdConfig());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, RoutingDocumentDeserializer.class.getName());
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");

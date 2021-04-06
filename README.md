@@ -1,3 +1,7 @@
+Настройка kafka для linux:
+https://dzone.com/articles/how-to-setup-kafka-cluster
+
+
 Настройка kafka для windows:
 https://dzone.com/articles/running-apache-kafka-on-windows-os
 
@@ -27,7 +31,7 @@ Important: Please ensure that your ZooKeeper instance is up and running before s
 
 4. Creating Topics</br>
 
-kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic demo
+kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 3 --partitions 6 --topic demo
 
 5.Creating a Producer 
 

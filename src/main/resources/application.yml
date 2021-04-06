@@ -1,9 +1,8 @@
 #default config value
-brokers: "localhost:9092"
+brokers: "localhost:9091,localhost:9092,localhost:9093"
 messageCount: 1000
 topicName: "demo"
-groupIdConfig: "consumerGroup1"
-maxNoMessageFoundCount: 100
+groupIdConfig: "consumerGroup"
 consumer:
   offsetResetLatest: "latest"
   offsetResetEarlier: "earliest"

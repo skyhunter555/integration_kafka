@@ -9,7 +9,6 @@ public class KafkaConfig {
     private Integer messageCount;
     private String  topicName;
     private String  groupIdConfig;
-    private Integer maxNoMessageFoundCount;
     private ConsumerConfig consumer;
     private ProducerConfig producer;
 }
