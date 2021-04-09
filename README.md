@@ -30,8 +30,12 @@ Important: Please ensure that your ZooKeeper instance is up and running before s
 3.3. Now type .\bin\windows\kafka-server-start.bat .\config\server.properties and press Enter.</br>
 
 4. Creating Topics</br>
-
+For 1 and 2 cases
 kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 3 --partitions 6 --topic demo
+For 3 case
+kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 3 --partitions 6 --topic demo --config "cleanup.policy=compact,delete" --config "delete.retention.ms=100"
+Check topic config
+kafka-topics.bat --zookeeper localhost:2181 --describe demo
 
 5.Creating a Producer 
 

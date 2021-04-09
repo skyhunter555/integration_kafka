@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -65,7 +66,8 @@ public class IntegrationKafkaApplication {
         }
 
         try {
-            runConsumers( 3); //Для 1-го и 2-го кейса = 3, для 3-го кейса = 2
+            //runConsumers( 3); // 1, 2 case
+            runConsumersWithTimeout(3, 10); // 3 case
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -90,6 +92,7 @@ public class IntegrationKafkaApplication {
     }
 
     private static void startConsumer(String consumerId, String consumerGroup) {
+
         Consumer consumer = ConsumerCreator.createConsumer(config, consumerGroup);
         while (msg_received_counter.get() < config.getMessageCount()) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
@@ -101,8 +104,9 @@ public class IntegrationKafkaApplication {
                 }
                 consumerRecordSet.add(record.value());
                 consumerRecordSetMap.put(consumerId, consumerRecordSet);
-                LOG.info(String.format("Consumer %s read record number=%s, value=%s, partition=%s, offset = %s",
+                LOG.info(String.format("Consumer %s read record key=%s, number=%s, value=%s, partition=%s, offset = %s",
                         consumerId,
+                        record.key(),
                         consumerRecordSet.size(),
                         record.value(),
                         record.partition(),
@@ -113,6 +117,9 @@ public class IntegrationKafkaApplication {
         }
     }
 
+    /**
+     * For 1 and 2 cases
+     */
     private static void runConsumers(Integer consumerCount) throws InterruptedException {
 
         ExecutorService executorService = Executors.newFixedThreadPool(consumerCount + 1);
@@ -121,6 +128,24 @@ public class IntegrationKafkaApplication {
             executorService.execute(() -> startConsumer(consumerId, config.getGroupIdConfig()));
         }
         executorService.execute(IntegrationKafkaApplication::runProducer);
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
+    }
+
+    /**
+     * For 3 case
+     */
+    private static void runConsumersWithTimeout(Integer consumerCount, Integer timeOutMinutes) throws InterruptedException {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(consumerCount + 1);
+        executorService.execute(IntegrationKafkaApplication::runProducer);
+
+        executorService.awaitTermination(timeOutMinutes, TimeUnit.MINUTES);
+        for (int i = 0; i < consumerCount; i++) {
+            String consumerId = Integer.toString(i + 1);
+            executorService.execute(() -> startConsumer(consumerId, config.getGroupIdConfig()));
+        }
+
         executorService.shutdown();
         executorService.awaitTermination(1, TimeUnit.MINUTES);
     }
@@ -135,13 +160,19 @@ public class IntegrationKafkaApplication {
             LOG.log(Level.WARNING, "Error readValue from resource", e);
             return;
         }
-        Producer<Long, RoutingDocument> producer = ProducerCreator.createProducer(config);
+
+        Producer<String, RoutingDocument> producer = ProducerCreator.createProducer(config);
+
         for (int index = 0; index < config.getMessageCount(); index++) {
             document.setDocId(index);
-            ProducerRecord<Long, RoutingDocument> record = new ProducerRecord<>(config.getTopicName(), document);
+            String messageKey = UUID.randomUUID().toString();
+            //Кейс 1
+            //ProducerRecord<String, RoutingDocument> record = new ProducerRecord<>(config.getTopicName(), document);
+            //Кейс 2
+            ProducerRecord<String, RoutingDocument> record = new ProducerRecord<>(config.getTopicName(), messageKey, document);
             try {
                 RecordMetadata metadata = producer.send(record).get();
-                LOG.info(String.format("Record %s sent to partition=%s with offset=%s", index, metadata.partition(), metadata.offset()));
+                LOG.info(String.format("Record %s sent to partition=%s with key=%s, offset=%s", index, metadata.partition(), messageKey, metadata.offset()));
                 msg_sent_counter.incrementAndGet();
             } catch (ExecutionException | InterruptedException e) {
                 LOG.log(Level.WARNING, "Error in sending record", e);

@@ -3,18 +3,18 @@ package ru.syntez.integration.kafka.kafka;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.LongDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import ru.syntez.integration.kafka.utils.RoutingDocumentDeserializer;
 import java.util.Collections;
 import java.util.Properties;
 
 public class ConsumerCreator {
 
-    public static Consumer<Long, String> createConsumer(KafkaConfig kafkaConfig, String consumerGroup) {
+    public static Consumer<String, String> createConsumer(KafkaConfig kafkaConfig, String consumerGroup) {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getBrokers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, RoutingDocumentDeserializer.class.getName());
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 
@@ -24,7 +24,7 @@ public class ConsumerCreator {
         props.put(ConsumerConfig.CLIENT_RACK_CONFIG, kafkaConfig.getConsumer().getClientRack());
         props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, kafkaConfig.getConsumer().getPartitionAssignmentStrategy());
 
-        Consumer<Long, String> consumer = new KafkaConsumer<>(props);
+        Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(kafkaConfig.getTopicName()));
         return consumer;
     }
