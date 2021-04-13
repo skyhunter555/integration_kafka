@@ -33,7 +33,7 @@ Important: Please ensure that your ZooKeeper instance is up and running before s
 For 1 and 2 cases
 kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 3 --partitions 6 --topic demo
 For 3 case
-kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 3 --partitions 6 --topic demo --config "cleanup.policy=compact,delete" --config "delete.retention.ms=100"
+kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 3 --partitions 6 --topic demo --config "cleanup.policy=compact,delete" --config "delete.retention.ms=100"  --config "retention.bytes=20971520"
 Check topic config
 kafka-topics.bat --zookeeper localhost:2181 --describe demo
 
@@ -47,6 +47,14 @@ kafka-console-consumer.bat --zookeeper localhost:2181 --topic test
 
 7. Передача сообщения из производителя в тему demo</br>
  {"id":"1","content":"test111"} 
+
+log.segment.bytes = 1048576
+log.retention.bytes = 5485760
+log.retention.hours=0
+log.retention.minutes = 2
+log.retention.check.interval.minutes = 2
+log.cleanup.policy = compact
+log.cleaner.enable = true
 
 ## Build
 mvn clean install

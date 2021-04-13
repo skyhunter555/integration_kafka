@@ -1,5 +1,6 @@
 package ru.syntez.integration.kafka.entrypoints.http;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -8,6 +9,7 @@ import org.junit.Test;
  * @author Skyhunter
  * @date 15.03.2021
  */
+@Ignore
 class TestMessageControllerTest {
 
     @Test

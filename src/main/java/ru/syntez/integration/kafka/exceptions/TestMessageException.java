@@ -6,17 +6,17 @@ package ru.syntez.integration.kafka.exceptions;
  * @author Skyhunter
  * @date 26.02.2021
  */
-public class TestMessageNotFoundException extends RuntimeException {
+public class TestMessageException extends RuntimeException {
 
-    public TestMessageNotFoundException(String message) {
+    public TestMessageException(String message) {
         super(message);
     }
 
-    public TestMessageNotFoundException(String messageFormat, Object... messageArgs) {
+    public TestMessageException(String messageFormat, Object... messageArgs) {
         super(String.format(messageFormat, messageArgs));
     }
 
-    public TestMessageNotFoundException(Throwable throwable) {
+    public TestMessageException(Throwable throwable) {
         super(throwable);
     }
 

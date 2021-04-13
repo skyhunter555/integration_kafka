@@ -8,5 +8,6 @@ package ru.syntez.integration.kafka.entities;
  */
 public enum DocumentTypeEnum {
     order,
-    invoice
+    invoice,
+    unknown
 }

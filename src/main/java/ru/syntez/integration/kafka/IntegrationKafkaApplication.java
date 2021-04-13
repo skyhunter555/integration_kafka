@@ -11,14 +11,15 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.yaml.snakeyaml.Yaml;
+import ru.syntez.integration.kafka.entities.DocumentTypeEnum;
 import ru.syntez.integration.kafka.entities.RoutingDocument;
+import ru.syntez.integration.kafka.exceptions.TestMessageException;
 import ru.syntez.integration.kafka.kafka.ConsumerCreator;
 import ru.syntez.integration.kafka.kafka.KafkaConfig;
 import ru.syntez.integration.kafka.kafka.ProducerCreator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -56,18 +57,19 @@ public class IntegrationKafkaApplication {
     public static void main(String[] args) {
 
         Yaml yaml = new Yaml();
-        //try( InputStream in = Files.newInputStream( Paths.get( args[ 0 ] ) ) ) {
-        try( InputStream in = Files.newInputStream(Paths.get(IntegrationKafkaApplication.class.getResource("/application.yml").toURI()))) {
+        try( InputStream in = Files.newInputStream( Paths.get( args[ 0 ] ) ) ) {
+            //try( InputStream in = Files.newInputStream(Paths.get(IntegrationKafkaApplication.class.getResource("/application.yml").toURI()))) {
             config = yaml.loadAs( in, KafkaConfig.class );
             LOG.log(Level.INFO, config.toString());
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             LOG.log(Level.WARNING, "Error load KafkaConfig from resource", e);
             return;
         }
 
         try {
             //runConsumers( 3); // 1, 2 case
-            runConsumersWithTimeout(3, 10); // 3 case
+            //runConsumersWithKeysAndTimeout(3,3);
+            runConsumersWithVersionsAndTimeout(3, 3); // 3 case
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -78,6 +80,10 @@ public class IntegrationKafkaApplication {
         Integer uniqueCount = 0;
         for (Map.Entry entry: consumerRecordSetMap.entrySet()) {
             Set consumerRecordSet = (Set) entry.getValue();
+            //for (Object document: consumerRecordSet.toArray()) {
+            //    RoutingDocument doc = (RoutingDocument) document;
+            //    LOG.info(entry.getKey() + ";" + doc.getDocId() + ";" + doc.getDocType().name());
+            //}
             uniqueCount = uniqueCount + consumerRecordSet.size();
             BigDecimal percent = (BigDecimal.valueOf(100).multiply(BigDecimal.valueOf(consumerRecordSet.size())))
                     .divide(BigDecimal.valueOf(msg_received_counter.longValue()), 3);
@@ -135,12 +141,31 @@ public class IntegrationKafkaApplication {
     /**
      * For 3 case
      */
-    private static void runConsumersWithTimeout(Integer consumerCount, Integer timeOutMinutes) throws InterruptedException {
+    private static void runConsumersWithKeysAndTimeout(Integer consumerCount, Integer timeOutMinutes) throws InterruptedException {
 
         ExecutorService executorService = Executors.newFixedThreadPool(consumerCount + 1);
-        executorService.execute(IntegrationKafkaApplication::runProducer);
+        executorService.execute(IntegrationKafkaApplication::runProducerWithKeys);
 
         executorService.awaitTermination(timeOutMinutes, TimeUnit.MINUTES);
+
+        for (int i = 0; i < consumerCount; i++) {
+            String consumerId = Integer.toString(i + 1);
+            executorService.execute(() -> startConsumer(consumerId, config.getGroupIdConfig()));
+        }
+
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
+    }
+    /**
+     * For 3 case
+     */
+    private static void runConsumersWithVersionsAndTimeout(Integer consumerCount, Integer timeOutMinutes) throws InterruptedException {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(consumerCount + 1);
+        executorService.execute(IntegrationKafkaApplication::runProducerWithVersions);
+
+        executorService.awaitTermination(timeOutMinutes, TimeUnit.MINUTES);
+
         for (int i = 0; i < consumerCount; i++) {
             String consumerId = Integer.toString(i + 1);
             executorService.execute(() -> startConsumer(consumerId, config.getGroupIdConfig()));
@@ -151,33 +176,75 @@ public class IntegrationKafkaApplication {
     }
 
     private static void runProducer() {
-        String messageXml;
-        RoutingDocument document;
-        try {
-            messageXml = new String(Files.readAllBytes(Paths.get(IntegrationKafkaApplication.class.getResource("/router_doc_1.xml").toURI())));
-            document = xmlMapper().readValue(messageXml, RoutingDocument.class);
-        } catch (IOException | URISyntaxException e) {
-            LOG.log(Level.WARNING, "Error readValue from resource", e);
-            return;
+        RoutingDocument document = loadDocument();
+        Producer<String, RoutingDocument> producer = ProducerCreator.createProducer(config);
+        for (int index = 0; index < config.getMessageCount(); index++) {
+            document.setDocId(index);
+            sendMessage(producer, new ProducerRecord<>(config.getTopicName(), document), index);
         }
 
+    }
+
+    private static void runProducerWithKeys() {
+        RoutingDocument document = loadDocument();
+        Producer<String, RoutingDocument> producer = ProducerCreator.createProducer(config);
+        for (int index = 0; index < config.getMessageCount(); index++) {
+            document.setDocId(index);
+            sendMessage(producer, new ProducerRecord<>(config.getTopicName(), UUID.randomUUID().toString(), document), index);
+        }
+        producer.close();
+    }
+
+    /**
+     * Генерация сообщений с тремя версиями на один ключ
+     */
+    private static void runProducerWithVersions() {
+        RoutingDocument document = loadDocument();
         Producer<String, RoutingDocument> producer = ProducerCreator.createProducer(config);
 
         for (int index = 0; index < config.getMessageCount(); index++) {
             document.setDocId(index);
-            String messageKey = UUID.randomUUID().toString();
-            //Кейс 1
-            //ProducerRecord<String, RoutingDocument> record = new ProducerRecord<>(config.getTopicName(), document);
-            //Кейс 2
-            ProducerRecord<String, RoutingDocument> record = new ProducerRecord<>(config.getTopicName(), messageKey, document);
-            try {
-                RecordMetadata metadata = producer.send(record).get();
-                LOG.info(String.format("Record %s sent to partition=%s with key=%s, offset=%s", index, metadata.partition(), messageKey, metadata.offset()));
-                msg_sent_counter.incrementAndGet();
-            } catch (ExecutionException | InterruptedException e) {
-                LOG.log(Level.WARNING, "Error in sending record", e);
-            }
+            document.setDocType(DocumentTypeEnum.unknown);
+            sendMessage(producer, new ProducerRecord<>(config.getTopicName(), String.format("key_%s", index), document), index);
         }
 
+        for (int index = 0; index < config.getMessageCount(); index++) {
+            document.setDocId(index);
+            document.setDocType(DocumentTypeEnum.order);
+            sendMessage(producer, new ProducerRecord<>(config.getTopicName(), String.format("key_%s", index), document), index);
+        }
+
+        for (int index = 0; index < config.getMessageCount(); index++) {
+            document.setDocId(index);
+            document.setDocType(DocumentTypeEnum.invoice);
+            sendMessage(producer, new ProducerRecord<>(config.getTopicName(), String.format("key_%s", index), document), index);
+        }
+
+    }
+
+    private static RoutingDocument loadDocument() {
+        String messageXml = "<?xml version=\"1.0\" encoding=\"windows-1251\"?><routingDocument><docId>1</docId><docType>order</docType></routingDocument>";
+        RoutingDocument document;
+        try {
+            document = xmlMapper().readValue(messageXml, RoutingDocument.class);
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Error readValue from resource", e);
+            throw new TestMessageException(e);
+        }
+        return document;
+    }
+
+    private static void sendMessage(
+            Producer<String, RoutingDocument> producer,
+            ProducerRecord<String, RoutingDocument> record,
+            Integer index
+    ) {
+        try {
+            RecordMetadata metadata = producer.send(record).get();
+            LOG.info(String.format("Record %s sent to partition=%s with key=%s, offset=%s", index, metadata.partition(), record.key(), metadata.offset()));
+            msg_sent_counter.incrementAndGet();
+        } catch (ExecutionException | InterruptedException e) {
+            LOG.log(Level.WARNING, "Error in sending record", e);
+        }
     }
 }
