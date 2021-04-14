@@ -56,5 +56,50 @@ log.retention.check.interval.minutes = 2
 log.cleanup.policy = compact
 log.cleaner.enable = true
 
+****************************************
+delete logs
+2021-04-01 07:08:07,296] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-2/00000000000000000261.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,296] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-2/00000000000000000261.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,297] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-2/00000000000000000261.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,297] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-2/00000000000000001027.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,297] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-2/00000000000000001027.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,297] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-2/00000000000000001027.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,337] INFO [Log partition=demo4-1, dir=/opt/kafka/kafka_2.13-2.7.0_1/logs] Deleting segment files LogSegment(baseOffset=232, size=104763, lastModifiedTime=1617275069000, largestRecordTimestamp=Some(1617275068989)),LogSegment(baseOffset=998, size=24249, lastModifiedTime=1617275098000, largestRecordTimestamp=Some(1617275098734)) (kafka.log.Log)
+[2021-04-01 07:08:07,338] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-1/00000000000000000232.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,338] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-1/00000000000000000232.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,338] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-1/00000000000000000232.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,338] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-1/00000000000000000998.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,339] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-1/00000000000000000998.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,339] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-1/00000000000000000998.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,380] INFO [Log partition=demo4-5, dir=/opt/kafka/kafka_2.13-2.7.0_1/logs] Deleting segment files LogSegment(baseOffset=250, size=104766, lastModifiedTime=1617275075000, largestRecordTimestamp=Some(1617275075543)),LogSegment(baseOffset=1016, size=15344, lastModifiedTime=1617275098000, largestRecordTimestamp=Some(1617275098766)) (kafka.log.Log)
+[2021-04-01 07:08:07,381] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-5/00000000000000000250.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,381] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-5/00000000000000000250.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,381] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-5/00000000000000000250.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,405] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-5/00000000000000001016.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,405] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-5/00000000000000001016.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,405] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-5/00000000000000001016.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,440] INFO [Log partition=demo4-0, dir=/opt/kafka/kafka_2.13-2.7.0_1/logs] Deleting segment files LogSegment(baseOffset=232, size=104752, lastModifiedTime=1617275063000, largestRecordTimestamp=Some(1617275063172)),LogSegment(baseOffset=998, size=28222, lastModifiedTime=1617275098000, largestRecordTimestamp=Some(1617275098869)) (kafka.log.Log)
+[2021-04-01 07:08:07,441] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-0/00000000000000000232.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,441] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-0/00000000000000000232.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,441] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-0/00000000000000000232.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,441] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-0/00000000000000000998.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,441] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-0/00000000000000000998.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,442] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-0/00000000000000000998.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,526] INFO [Log partition=demo4-4, dir=/opt/kafka/kafka_2.13-2.7.0_1/logs] Deleting segment files LogSegment(baseOffset=259, size=104741, lastModifiedTime=1617275074000, largestRecordTimestamp=Some(1617275074439)),LogSegment(baseOffset=1025, size=16029, lastModifiedTime=1617275098000, largestRecordTimestamp=Some(1617275098930)) (kafka.log.Log)
+[2021-04-01 07:08:07,527] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-4/00000000000000000259.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,527] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-4/00000000000000000259.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,527] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-4/00000000000000000259.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,527] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-4/00000000000000001025.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,527] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-4/00000000000000001025.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,528] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-4/00000000000000001025.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,541] INFO [Log partition=demo4-3, dir=/opt/kafka/kafka_2.13-2.7.0_1/logs] Deleting segment files LogSegment(baseOffset=266, size=104733, lastModifiedTime=1617275071000, largestRecordTimestamp=Some(1617275071883)),LogSegment(baseOffset=1032, size=23016, lastModifiedTime=1617275099000, largestRecordTimestamp=Some(1617275099037)) (kafka.log.Log)
+[2021-04-01 07:08:07,542] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-3/00000000000000000266.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,542] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-3/00000000000000000266.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,542] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-3/00000000000000000266.timeindex.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,542] INFO Deleted log /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-3/00000000000000001032.log.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,542] INFO Deleted offset index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-3/00000000000000001032.index.deleted. (kafka.log.LogSegment)
+[2021-04-01 07:08:07,543] INFO Deleted time index /opt/kafka/kafka_2.13-2.7.0_1/logs/demo4-3/00000000000000001032.timeindex.deleted. (kafka.log.LogSegment)
+
+
 ## Build
 mvn clean install
